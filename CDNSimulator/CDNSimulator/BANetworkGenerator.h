@@ -1,0 +1,1 @@
+void BANetworkGenerate();  // 生成BA无标度网络
