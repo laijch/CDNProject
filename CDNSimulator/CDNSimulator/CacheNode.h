@@ -3,8 +3,9 @@
 class CacheNode
 {
 public:
-	CacheNode(int id_);
+	CacheNode();
 	~CacheNode();
+	void setID(int id_);
 	void setDegree(int degree_);
 	void setWeight(double weight_);
 	void setProDis(double proDis_);
@@ -14,6 +15,7 @@ public:
 	double getPosX();
 	double getPosY();
 	void setPos(double x_, double y_);
+	int file[15];  // »º´æÎÄ¼þ
 
 private:
 	int id;
@@ -22,7 +24,7 @@ private:
 	double probabilityDistribution;
 	int fileNum;
 	int replaceFileNum;
-	int file[15];
+	
 	double positionX;
 	double positionY;
 };

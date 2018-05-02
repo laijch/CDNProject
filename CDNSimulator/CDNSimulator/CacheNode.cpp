@@ -1,32 +1,37 @@
 #include "CacheNode.h"
 
-CacheNode::CacheNode(int id_)
+CacheNode::CacheNode()
 {
-	id = id_;
+	id = 0;
 	replaceFileNum = 0;
 	degree = 0;
 	weight = 0.0;
 	probabilityDistribution = 0.0;
 	positionX = 0.0;
 	positionY = 0.0;
+}
+
+CacheNode::~CacheNode()
+{
+}
+
+void CacheNode::setID(int id_)
+{
+	id = id_;
 	// 当节点为源服务器时，储存全部（15个）文件
-	if (id == 1) {
+	if (id == 0) {
 		fileNum = 15;
 		for (int i = 0; i < 15; i++) {
 			file[i] = i + 1;
 		}
 	}
 	// 节点为缓存服务器时，只储存10个文件
-	else {
+	else if (id > 0) {
 		fileNum = 0;
 		for (int i = 0; i < 15; i++) {
 			file[i] = 0;
 		}
 	}
-}
-
-CacheNode::~CacheNode()
-{
 }
 
 void CacheNode::setDegree(int degree_)

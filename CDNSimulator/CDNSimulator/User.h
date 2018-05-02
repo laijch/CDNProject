@@ -2,11 +2,14 @@
 class User
 {
 public:
-	User(int id_);
+	User();
 	~User();
+	void setID(int id_);
 	void setTargetFile(int file_);
 	void setPosX(double x_);
 	void setPosY(double y_);
+	double getPosX();
+	double getPosY();
 	void resetPos(double distance_);
 
 private:

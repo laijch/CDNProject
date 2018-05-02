@@ -3,9 +3,9 @@
 #include <math.h>
 #include <time.h>
 
-User::User(int id_)
+User::User()
 {
-	id = id_;
+	id = 0;
 	targetFile = 0;
 	positionX = 0.0;
 	positionY = 0.0;
@@ -13,6 +13,11 @@ User::User(int id_)
 
 User::~User()
 {
+}
+
+void User::setID(int id_)
+{
+	id = id_;
 }
 
 void User::setTargetFile(int file_)
@@ -28,6 +33,16 @@ void User::setPosX(double x_)
 void User::setPosY(double y_)
 {
 	positionY = y_;
+}
+
+double User::getPosX()
+{
+	return positionX;
+}
+
+double User::getPosY()
+{
+	return positionY;
 }
 
 void User::resetPos(double distance_)

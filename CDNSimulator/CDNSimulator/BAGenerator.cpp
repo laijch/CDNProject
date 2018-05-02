@@ -1,3 +1,4 @@
+#include "BAGenerator.h"
 #include<stdio.h>  
 #include<stdlib.h>  
 #include<time.h>  
@@ -8,34 +9,15 @@
 #define M_0 4
 #define M 3
 
-struct Node;
-typedef struct Node* NodePtr;
-typedef struct Node {
-	int degree;
-	double weight;
-	double probabilityDistribution;
-}Node;
-
-Node* decisionMaking;
-int** adjacentMatrix;
-int* initalNetwork;
-
-void initial();
-void initalNetwork_M0_connected();
-void updateDecisionMakingData();
-void generateFreeScaleNetwork();
-void showAdjacentMatrix();
-
-void BANetworkGenerate()
+BAGenerator::BAGenerator()
 {
-	srand((unsigned)time(NULL));
-	initial();
-	initalNetwork_M0_connected();
-	generateFreeScaleNetwork();
-	//showAdjacentMatrix();
 }
 
-void initial()
+BAGenerator::~BAGenerator()
+{
+}
+
+void BAGenerator::initial()
 {
 	if (!(decisionMaking = (NodePtr)malloc(sizeof(Node) * (NETWORK_SIZE + 1))))
 	{
@@ -66,7 +48,8 @@ void initial()
 /*
 * 初始化：在NETWORK_SIZE中随机选择M_0个节点构成连通的网络。
 * */
-void initalNetwork_M0_connected() {
+void BAGenerator::initalNetwork_M0_connected()
+{
 	int i, j, randomFirst, randomSecond;
 	for (i = 1; i <= NETWORK_SIZE; i++)
 		for (j = 1; j <= NETWORK_SIZE; j++)
@@ -93,7 +76,8 @@ void initalNetwork_M0_connected() {
 /*
 * 通过adjacentMatrix更新decisionMaking数组
 * */
-void updateDecisionMakingData() {
+void BAGenerator::updateDecisionMakingData()
+{
 	int i, j, totalDegree = 0;
 
 	for (i = 1; i <= NETWORK_SIZE; i++)
@@ -113,7 +97,8 @@ void updateDecisionMakingData() {
 /*
 * 构造BA无标度网络模型
 * */
-void generateFreeScaleNetwork() {
+void BAGenerator::generateFreeScaleNetwork()
+{
 	int i, k, j = 1, length = 0;
 	int random_auxiliary_old[NETWORK_SIZE + 1];
 	int random_auxiliary[NETWORK_SIZE + 1 - M_0];
@@ -187,7 +172,8 @@ void generateFreeScaleNetwork() {
 	}
 }
 
-void showAdjacentMatrix() {
+void BAGenerator::showAdjacentMatrix()
+{
 	int i, j;
 	int numberOfEdge = 0;
 	printf("\tshow adjacentMatrix\n");
@@ -202,4 +188,12 @@ void showAdjacentMatrix() {
 		/*printf("\n");*/
 	}
 	printf("the number of edge is %d\n", numberOfEdge / 2);
+}
+
+void BAGenerator::BANetworkGenerate()
+{
+	srand((unsigned)time(NULL));
+	initial();
+	initalNetwork_M0_connected();
+	generateFreeScaleNetwork();
 }
