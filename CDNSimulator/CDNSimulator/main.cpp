@@ -2,18 +2,23 @@
 #include "CacheNode.h"
 #include "User.h"
 #include <iostream>
+#include <queue>
 #include <cstdlib>
 #include <ctime>
+#include <memory.h>
 
 // 生成[a, b]间的随机数
 #define random(a, b) (rand() % (b - a + 1) + a)
 
 using namespace std;
 
+BAGenerator baGen;
+CacheNode cacheNodes[1024];
+User users[10240];
+int getFileCost(int file, int nodeID_);  // 计算用户获取文件时所经过的花费（路径）
+
+
 int main() {
-	CacheNode cacheNodes[1024];
-	User users[10240];
-	BAGenerator baGen;
 	int nodeIndex = 0;
 	int userIndex = 0;
 	int i = 1;
@@ -39,37 +44,40 @@ int main() {
 	// 生成BA无标度网络
 	baGen.BANetworkGenerate();
 
-	double userX, userY;
-	int nodeX, nodeY, nodeID;
+	int nodeID;
 	int file;  // 用户请求的文件
 	int cost = 0;  // 用户请求的文件在网络中所经历的距离
+
 	// 用户未移动状态
-	for (i = 0; i < 10240; i++) {
-		userX = users[i].getPosX();
-		userY = users[i].getPosY();
-		// 确定用户离哪个节点近
-		nodeX = (int)(userX * 10 + 5) / 10;
-		nodeY = (int)(userY * 10 + 5) / 10;
-		if (nodeX > 32) nodeX = 32;
-		else if (nodeX < 1) nodeX = 1;
-		if (nodeY > 32) nodeY = 32;
-		else if (nodeY < 1) nodeY = 1;
-        // 确定用户所属于的节点ID
-		nodeID = (nodeX - 1) * 32 + (nodeY - 1);
+    for (i = 0; i < 10240; i++) {
+        // 获取用户所在节点的ID
+        nodeID = users[i].getNearNodeID();
 
-		// 用户随机请求文件
-		srand((unsigned)time(NULL));
-		file = random(1, 15);
+        // 用户随机请求文件
+        srand((unsigned)time(NULL));
+        file = random(1, 15);
 
-        // 该节点有请求文件
-		if (cacheNodes[nodeID].findFile(file)) {
-			++cost;
-        }
-        // 该节点无请求文件
-        else {
-            
-        }
-	}
+        cost = cost + getFileCost(file, nodeID);
+    }
+
+    cout << cost / 10240;
+
+    // 用户随机移动状态
+    for (i = 0; i < 10240; i++) {
+        // 随机改变用户的位置
+        srand((unsigned)time(NULL));
+        users[i].resetPos(random(1, 32));
+
+        // 获取用户所在节点的ID
+        nodeID = users[i].getNearNodeID();
+
+        // 用户随机请求文件
+        file = random(1, 15);
+
+        cost = cost + getFileCost(file, nodeID);
+    }
+
+    cout << cost / 10240;
 
 	/*for (i = 0; i < 10; i++) {
 		for (j = 0; j < 15; j++) {
@@ -89,4 +97,64 @@ int main() {
 		cout << num << endl;
 	}*/
 	return 0;
+}
+
+int getFileCost(int file, int nodeID_) {
+    int cost = 0;
+    int nodeID = nodeID_;
+    //// 该节点有请求文件
+    //if (cacheNodes[nodeID].findFile(file)) {
+    //    accessLength = 0;  // 重设访问路径长度
+    //    return 1;
+    //}
+    //// 该节点无请求文件，寻找有该文件的节点
+    //else {
+    //    ++accessLength;
+    //    for (int j = 1; j <= 1024; j++) {
+    //        // 与该节点相连
+    //        if (baGen.adjacentMatrix[nodeID][j] == 1 && nodeID != j) {
+    //            for (int i = 0; i < accessLength; i++) {
+    //                if (j == accessNodes[i]) {
+    //                    return 0;
+    //                }
+    //            }
+    //            cost = cost + getFileCost(file, j) + 1;
+    //        }
+    //    }
+    //}
+
+    if (cacheNodes[nodeID].findFile(file)) {
+        return 0;
+    }
+
+    // 广度优先搜索BFS
+    bool visitedNodes[1024];
+    int distance[1024];
+    for (int i = 0; i < 1024; i++) {
+        visitedNodes[i] = false;
+        distance[i] = 2000;
+    }
+
+    queue<int> nodeQueue;
+    nodeQueue.push(nodeID);
+    visitedNodes[nodeID] = true;
+    distance[nodeID] = 0;
+    while (!nodeQueue.empty()) {
+        nodeID = nodeQueue.front();
+        nodeQueue.pop();
+        for (int i = 1; i <= 1024; i++) {
+            // 与该节点相连且未访问过
+            if ((baGen.adjacentMatrix[nodeID + 1][i] == 1) && ((nodeID + 1) != i) 
+                && (!visitedNodes[i - 1])) {
+                visitedNodes[i - 1] = true;
+                distance[i - 1] = distance[nodeID] + 1;
+                nodeQueue.push(i - 1);
+                if (cacheNodes[i - 1].findFile(file)) {
+                    cacheNodes[nodeID].LRUCache(file); // LCD + LRU
+                    return distance[i - 1];
+                }
+            }
+        }
+    }
+    return cost;
 }

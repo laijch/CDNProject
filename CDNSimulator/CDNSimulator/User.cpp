@@ -54,3 +54,18 @@ void User::resetPos(double distance_)
 	positionX = positionX + distance_ * cos(angle*PI / 180.0);
 	positionY = positionY + distance_ * sin(angle*PI / 180.0);
 }
+
+// 确定用户离哪个节点近
+int User::getNearNodeID()
+{
+    int nodeX, nodeY, nodeID;
+    nodeX = (int)(positionX * 10 + 5) / 10;
+    nodeY = (int)(positionY * 10 + 5) / 10;
+    if (nodeX > 32) nodeX = 32;
+    else if (nodeX < 1) nodeX = 1;
+    if (nodeY > 32) nodeY = 32;
+    else if (nodeY < 1) nodeY = 1;
+    // 确定用户所属于的节点ID
+    nodeID = (nodeX - 1) * 32 + (nodeY - 1);
+    return nodeID;
+}

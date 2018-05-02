@@ -11,6 +11,7 @@ public:
 	double getPosX();
 	double getPosY();
 	void resetPos(double distance_);
+    int getNearNodeID();
 
 private:
 	int id;
