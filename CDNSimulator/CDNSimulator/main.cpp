@@ -17,6 +17,7 @@ BAGenerator baGen;
 CacheNode cacheNodes[1024];
 User users[10240];
 int getFileCost(int file, int nodeID_);  // 计算用户获取文件时所经过的花费（路径）
+double getPrg(double rg);  // 获取用户移动半径rg（距离）的概率
 
 
 int main() {
@@ -163,4 +164,11 @@ int getFileCost(int file, int nodeID_) {
         }
     }
     return cost;
+}
+
+double getPrg(double rg) {
+    // 参数设置
+    double rg0 = 1.99, br = 1.65, k = 350;
+    double Prg = pow(rg + rg0, -1.0*br)*exp(-1 * rg / k);
+    return Prg;
 }

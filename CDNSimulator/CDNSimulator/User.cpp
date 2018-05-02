@@ -50,7 +50,7 @@ double User::getPosY()
 
 void User::resetPos(double distance_)
 {
-	// 随机生成旋转角度
+	// 随机生成旋转角度，随机种子在main.cpp中产生，不能重复生成
 	int angle = rand() % 360;
     //cout << angle << " ";
 	double PI = 3.14159265;
