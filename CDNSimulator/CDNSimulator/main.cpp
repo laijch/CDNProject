@@ -2,6 +2,7 @@
 #include "CacheNode.h"
 #include "User.h"
 #include <iostream>
+#include <iomanip>
 #include <queue>
 #include <cstdlib>
 #include <ctime>
@@ -47,6 +48,14 @@ int main() {
 	int nodeID;
 	int file;  // 用户请求的文件
 	int cost = 0;  // 用户请求的文件在网络中所经历的距离
+    int allCost = 0;  // 总消耗
+
+    srand((unsigned)time(NULL));
+
+    /*cout << std::left << setw(15) << "userID" << ": " 
+        << setw(15) << "userPosX" << setw(15) << "userPosY"
+        << setw(15) << "nodeID" << setw(15) << "file" 
+        << setw(15) << "cost" << setw(15) << "allCost" << endl;*/
 
 	// 用户未移动状态
     for (i = 0; i < 10240; i++) {
@@ -54,30 +63,47 @@ int main() {
         nodeID = users[i].getNearNodeID();
 
         // 用户随机请求文件
-        srand((unsigned)time(NULL));
         file = random(1, 15);
+        
+        cost = getFileCost(file, nodeID);
+        allCost += cost;
 
-        cost = cost + getFileCost(file, nodeID);
+        /*cout << std::left << setw(15) << i << ": " 
+            << setw(15) << users[i].getPosX() << setw(15) << users[i].getPosY() 
+            << setw(15) << nodeID << setw(15) << file 
+            << setw(15) << cost << setw(15) << allCost << endl;*/
     }
 
-    cout << cost / 10240;
+    cout << "0: " << fixed << setprecision(8) << double(allCost) / 10240 << endl;
+    //cout << "allCost: " << allCost << " ";
+    allCost = 0;
 
-    // 用户随机移动状态
-    for (i = 0; i < 10240; i++) {
-        // 随机改变用户的位置
-        srand((unsigned)time(NULL));
-        users[i].resetPos(random(1, 32));
+    for (q = 1; q <= 100; q++) {
+        // 用户随机移动状态
+        for (i = 0; i < 10240; i++) {
+            // 随机改变用户的位置
+            double step = (double)random(1, 31);
+            users[i].resetPos(step);
 
-        // 获取用户所在节点的ID
-        nodeID = users[i].getNearNodeID();
+            // 获取用户所在节点的ID
+            nodeID = users[i].getNearNodeID();
 
-        // 用户随机请求文件
-        file = random(1, 15);
+            // 用户随机请求文件
+            file = random(1, 15);
 
-        cost = cost + getFileCost(file, nodeID);
+            cost = getFileCost(file, nodeID);
+            allCost += cost;
+
+            /*cout << std::left << setw(15) << i << ": "
+                << setw(15) << users[i].getPosX() << setw(15) << users[i].getPosY()
+                << setw(15) << nodeID << setw(15) << file
+                << setw(15) << cost << setw(15) << allCost << endl;*/
+        }
+
+        cout << q << ": " << fixed << setprecision(8) << double(allCost) / 10240 << endl;
+        //cout << "allCost: " << allCost << " ";
+        allCost = 0;
     }
-
-    cout << cost / 10240;
 
 	/*for (i = 0; i < 10; i++) {
 		for (j = 0; j < 15; j++) {
@@ -102,26 +128,6 @@ int main() {
 int getFileCost(int file, int nodeID_) {
     int cost = 0;
     int nodeID = nodeID_;
-    //// 该节点有请求文件
-    //if (cacheNodes[nodeID].findFile(file)) {
-    //    accessLength = 0;  // 重设访问路径长度
-    //    return 1;
-    //}
-    //// 该节点无请求文件，寻找有该文件的节点
-    //else {
-    //    ++accessLength;
-    //    for (int j = 1; j <= 1024; j++) {
-    //        // 与该节点相连
-    //        if (baGen.adjacentMatrix[nodeID][j] == 1 && nodeID != j) {
-    //            for (int i = 0; i < accessLength; i++) {
-    //                if (j == accessNodes[i]) {
-    //                    return 0;
-    //                }
-    //            }
-    //            cost = cost + getFileCost(file, j) + 1;
-    //        }
-    //    }
-    //}
 
     if (cacheNodes[nodeID].findFile(file)) {
         return 0;
