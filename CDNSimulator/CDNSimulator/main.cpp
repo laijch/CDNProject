@@ -6,6 +6,7 @@
 #include <queue>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <math.h>
 
 // 生成[a, b]间的随机数
@@ -44,7 +45,11 @@ int main() {
     // (0) 初始状态下的平均消耗
     cout << "初始状态下的平均消耗" << endl;
     avgCost = getAvgCostOfInitial();
+    // 将数据输出至txt中
+    ofstream outfile;
+    outfile.open("avgCost.txt");
     cout << "0: " << fixed << setprecision(8) << avgCost << endl;
+    outfile << "0 " << fixed << setprecision(8) << avgCost << endl;
 
     int time = 50;
 
@@ -59,7 +64,8 @@ int main() {
             cout << "用户随机移动状态下的平均消耗" << endl;
             for (int i = 1; i <= time; i++) {
                 avgCost = getAvgCostByRandomMove();
-                cout << i << ": " << fixed << setprecision(8) << avgCost << endl;
+                //cout << i << ": " << fixed << setprecision(8) << avgCost << endl;
+                outfile << i << " " << fixed << setprecision(8) << avgCost << endl;
             }
             break;
         }
@@ -68,13 +74,17 @@ int main() {
             cout << "用户按幂率分布移动状态下的平均消耗" << endl;
             for (int i = 1; i <= time; i++) {
                 avgCost = getAvgCostByPrgMove();
-                cout << i << ": " << fixed << setprecision(8) << avgCost << endl;
+                //cout << i << ": " << fixed << setprecision(8) << avgCost << endl;
+                outfile << i << " " << fixed << setprecision(8) << avgCost << endl;
             }
             break;
         }
         default:
             break;
     }
+
+    // 关闭文件
+    outfile.close();
 
 	return 0;
 }
