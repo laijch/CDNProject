@@ -248,7 +248,8 @@ double getAvgCostByPrgMove() {
 
 double getPrg(double rg) {
     // 参数设置
-    double rg0 = 1.99, br = 1.65, k = 350;  // 参数组1(1.99, 1.65, 350)
+    //double rg0 = 1.99, br = 1.65, k = 350;  // 参数组1(1.99, 1.65, 350)
+    double rg0 = 1.64, br = 1.80, k = 350;  // 参数组2(1.64, 1.80, 350)
     double Prg = pow(rg + rg0, -1.0*br)*exp(-1 * rg / k);
     return Prg;
 }
